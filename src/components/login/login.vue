@@ -12,7 +12,7 @@
       <el-form-item label="密码">
       <el-input v-model="formdata.password"></el-input>
       </el-form-item>
-      <el-button type="success" class="login-btn">成功按钮</el-button>
+      <el-button type="primary" class="login-btn">登录按钮</el-button>
 </el-form>
     </div>
 </template>
@@ -31,4 +31,20 @@ export default {
 </script>
 
 <style>
+.login-wrap {
+    background: #324152;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-wrap .login-form{
+    width: 400px;
+    padding: 30px;
+    border-radius: 5px;
+    background: #fff;
+}
+.login-wrap .login-btn{
+    width: 100%;
+}
 </style>
