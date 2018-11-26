@@ -28,16 +28,22 @@ export default {
     }
   },
   methods: {
-    handleLogin () {
-      this.$http.post('login', this.formdata)
-        .then((res) => {
+    //   es7的新特性
+   async handleLogin () {
+    //    在异步操作的前面加await,在用变量接收异步操作的结果,使之变得跟同步操作一样,代码风格更好看
+    const res=await this.$http.post('login', this.formdata)
+        
           const
             {meta: {msg, status}, data} = res.data
           if (status === 200) {
             //    跳转到home页面
             this.$router.push({name: 'home'})
+            // 提示成功
+            this.$message.success(msg)
+          } else {
+            this.$message.warning(msg)
           }
-        })
+        
     }
 
   }
