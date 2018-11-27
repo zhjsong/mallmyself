@@ -9,8 +9,8 @@
     <!-- 搜索框 -->
     <el-row class="searchRom">
       <el-col :span='16'>
-    <el-input placeholder="请输入姓名" v-model="query"  class="searchInput">
-    <el-button slot="append" icon="el-icon-search"></el-button>
+    <el-input clearable placeholder="请输入姓名" v-model="query"  class="searchInput">
+    <el-button @click='searchUser()' slot="append" icon="el-icon-search"></el-button>
    </el-input>
        <el-button type="success" >添加用户</el-button>
         </el-col>
@@ -101,10 +101,16 @@ export default {
        this.getUserList()
    },
    methods:{
+    //    搜索
+    searchUser(){
+      this.pagenum=1
+      this.getUserList()
+    },
     //    分页
      handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
            this.pagesize=val
+           this.pagenum=1
         this.getUserList()
       },
       handleCurrentChange(val) {
