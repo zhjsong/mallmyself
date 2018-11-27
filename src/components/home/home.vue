@@ -28,7 +28,7 @@
           <i class="el-icon-location"></i>
           <span>用户管理</span>
         </template>
-     
+
           <el-menu-item index="users">
             <template slot="title">
           <i class="el-icon-menu"></i>
@@ -44,7 +44,7 @@
           <i class="el-icon-location"></i>
           <span>权限管理</span>
         </template>
-     
+
           <el-menu-item index="2-1">
             <template slot="title">
           <i class="el-icon-menu"></i>
@@ -67,7 +67,7 @@
           <i class="el-icon-location"></i>
           <span>商品管理</span>
         </template>
-     
+
           <el-menu-item index="3-1">
             <template slot="title">
           <i class="el-icon-menu"></i>
@@ -96,7 +96,7 @@
           <i class="el-icon-location"></i>
           <span>订单管理</span>
         </template>
-     
+
           <el-menu-item index="4-1">
             <template slot="title">
           <i class="el-icon-menu"></i>
@@ -112,7 +112,7 @@
           <i class="el-icon-location"></i>
           <span>数据统计</span>
         </template>
-     
+
           <el-menu-item index="5-1">
             <template slot="title">
           <i class="el-icon-menu"></i>
@@ -134,24 +134,23 @@
 <script>
 export default {
 //   在组件渲染之前判断有没有token
-   beforeCreate() {
-       const token=localStorage.getItem('token')
+  beforeCreate () {
+    const token = localStorage.getItem('token')
     //    如果token不存在
-    if(!token) {
-        this.$router.push({name:'login'})
+    if (!token) {
+      this.$router.push({name: 'login'})
     }
-
-   },
-   methods:{
-       handlelogout(){
-        //    1.提示
-        this.$message.success('退出成功')
-        // 2.清除
-        localStorage.clear()
-        // 3.回到首页
-        this.$router.push({name:'login'})
-       }
-   }
+  },
+  methods: {
+    handlelogout () {
+      //    1.提示
+      this.$message.success('退出成功')
+      // 2.清除
+      localStorage.clear()
+      // 3.回到首页
+      this.$router.push({name: 'login'})
+    }
+  }
 }
 </script>
 
@@ -174,9 +173,9 @@ background-color: #b3c0d1;
     text-align: center;
 }
 .loginout {
-    
+
     text-decoration: none;
     line-height: 60px;
-    
+
 }
 </style>

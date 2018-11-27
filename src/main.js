@@ -7,11 +7,15 @@ import App from './App'
 import router from './router'
 import '@/assets/css/index.css'
 import MyHttpServer from '@/plugins/http.js'
+import moment from 'moment'
 
 Vue.use(ElementUI)
 Vue.use(MyHttpServer)
 Vue.config.productionTip = false
-
+// 给时间转变一下格式
+Vue.filter('fmtdata',(v)=>{
+   return moment(v).format('YYYY-MM-DD')
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
