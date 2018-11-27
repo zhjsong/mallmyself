@@ -9,10 +9,10 @@
     <!-- 搜索框 -->
     <el-row class="searchRom">
       <el-col :span='16'>
-    <el-input clearable placeholder="请输入姓名" v-model="query"  class="searchInput">
+    <el-input @clear="loadUser()" clearable placeholder="请输入姓名" v-model="query"  class="searchInput">
     <el-button @click='searchUser()' slot="append" icon="el-icon-search"></el-button>
    </el-input>
-       <el-button type="success" >添加用户</el-button>
+       <el-button type="success" @click="showAdd()">添加用户</el-button>
         </el-col>
   </el-row>
     <!-- 表格 -->
@@ -57,8 +57,8 @@
           <el-table-column
         label="操作">
         <template slot-scope="scope">
-             <el-button size='mini' plain type="primary" icon="el-icon-edit" circle></el-button>
-             <el-button size='mini' plain type="danger" icon="el-icon-delete" circle></el-button>
+             <el-button @click='editUser()' size='mini' plain type="primary" icon="el-icon-edit" circle></el-button>
+             <el-button @click='del(scope.row.id)' size='mini' plain type="danger" icon="el-icon-delete" circle></el-button>
              <el-button size='mini' plain type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
@@ -73,6 +73,47 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+  <el-form :model="form">
+    <el-form-item label="用户名称" label-width="100px">
+      <el-input v-model="form.username" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" label-width="100px">
+      <el-input v-model="form.password" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="邮箱" label-width="100px">
+      <el-input v-model="form.email" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="电话" label-width="100px">
+      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+    </el-form-item>
+  
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+    <el-button type="primary" @click="addUser()">确 定</el-button>
+  </div>
+</el-dialog>
+<!-- 编辑 -->
+ <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+  <el-form :model="form">
+    <el-form-item label="用户名称" label-width="100px">
+      <el-input v-model="form.username" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="邮箱" label-width="100px">
+      <el-input v-model="form.email" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="电话" label-width="100px">
+      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+    </el-form-item>
+  
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+    <el-button type="primary" @click="editUser()">确 定</el-button>
+  </div>
+</el-dialog>
   </el-card>
 </template>
 
@@ -94,14 +135,72 @@ export default {
            ],
            pagenum:1,
            pagesize:2,
-           total:-1
+           total:-1,
+          //  对话框
+          dialogFormVisibleAdd:false,
+          // 编辑对话框
+          dialogFormVisibleEdit:false,
+          form:{
+            username:'',
+            password:'',
+            email:'',
+            mobile: ''
+          }
        }   
    },
    created(){
        this.getUserList()
    },
    methods:{
+    //  编辑
+    editUser(){
+      this.dialogFormVisibleEdit=true
+    },
+    //  删除
+    del(userId){
+        this.$confirm('是否删除该数据', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          // 发送删除请求
+         const res=await this.$http.delete(`users/${userId}`)
+         this.getUserList()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })         
+        })
+    },
+    //  添加
+   async addUser(){
+     const res=await this.$http.post('users',this.form)
+     console.log(res)
+     const {
+       meta:{status,msg},data
+     }=res.data
+     if(status===201){
+       this.dialogFormVisibleAdd=false
+       this.$message.success(msg)
+       this.getUserList()
+      //  清空input
+      this.form={}
+     }else {
+       this.$message.warning(msg)
+     }
+    },
+    showAdd(){
+       this.dialogFormVisibleAdd=true
+    },
     //    搜索
+    loadUser(){
+      this.getUserList()
+    },
     searchUser(){
       this.pagenum=1
       this.getUserList()
