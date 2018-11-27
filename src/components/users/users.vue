@@ -44,14 +44,35 @@
         </template>
       </el-table-column>
         <el-table-column
-        prop="mg_state"
         label="用户状态">
+        <template slot-scope="scope">
+            <!-- 非字符串要用容器包裹 -->
+            <el-switch
+               v-model="scope.row.mg_state"
+               active-color="#13ce66"
+               inactive-color="#ff4949">
+            </el-switch>
+        </template>
       </el-table-column>
           <el-table-column
         label="操作">
+        <template slot-scope="scope">
+             <el-button size='mini' plain type="primary" icon="el-icon-edit" circle></el-button>
+             <el-button size='mini' plain type="danger" icon="el-icon-delete" circle></el-button>
+             <el-button size='mini' plain type="success" icon="el-icon-check" circle></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
+     <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[2, 4, 6, 8]"
+      :page-size="2"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -80,7 +101,17 @@ export default {
        this.getUserList()
    },
    methods:{
-       
+    //    分页
+     handleSizeChange(val) {
+        console.log(`每页 ${val} 条`)
+           this.pagesize=val
+        this.getUserList()
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`)
+        this.pagenum=val
+        this.getUserList()
+      },
     async getUserList(){
           const AUTH_TOKEN=localStorage.getItem('token')
           this.$http.defaults.headers.common['Authorization']=AUTH_TOKEN
