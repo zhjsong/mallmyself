@@ -8,10 +8,14 @@ import router from './router'
 import '@/assets/css/index.css'
 import MyHttpServer from '@/plugins/http.js'
 import moment from 'moment'
+import myBread from '@/components/common/myBread.vue'
 
 Vue.use(ElementUI)
 Vue.use(MyHttpServer)
 Vue.config.productionTip = false
+// 设置一个全局的Vue组件
+   Vue.component(myBread.name,myBread)
+
 // 给时间转变一下格式
 Vue.filter('fmtdata',(v)=>{
    return moment(v).format('YYYY-MM-DD')
