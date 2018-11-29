@@ -48,6 +48,7 @@
         <template slot-scope="scope">
             <!-- 非字符串要用容器包裹 -->
             <el-switch
+              @change='messtatus(scope.row)'
                v-model="scope.row.mg_state"
                active-color="#13ce66"
                inactive-color="#ff4949">
@@ -57,9 +58,9 @@
           <el-table-column
         label="操作">
         <template slot-scope="scope">
-             <el-button @click='editUser()' size='mini' plain type="primary" icon="el-icon-edit" circle></el-button>
+             <el-button @click='editUser(scope.row)' size='mini' plain type="primary" icon="el-icon-edit" circle></el-button>
              <el-button @click='del(scope.row.id)' size='mini' plain type="danger" icon="el-icon-delete" circle></el-button>
-             <el-button size='mini' plain type="success" icon="el-icon-check" circle></el-button>
+             <el-button @click='setRole(scope.row)' size='mini' plain type="success" icon="el-icon-check" circle></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,7 +100,7 @@
  <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
   <el-form :model="form">
     <el-form-item label="用户名称" label-width="100px">
-      <el-input v-model="form.username" autocomplete="off"></el-input>
+      <el-input  v-model="form.username" autocomplete="off"></el-input>
     </el-form-item>
     <el-form-item label="邮箱" label-width="100px">
       <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -111,7 +112,26 @@
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
-    <el-button type="primary" @click="editUser()">确 定</el-button>
+    <el-button type="primary" @click="editPut()">确 定</el-button>
+  </div>
+</el-dialog>
+
+  <!-- 角色选择 -->
+  <el-dialog title="角色分配" :visible.sync="dialogFormVisibleRole">
+  <el-form :model="form">
+    <el-form-item label="用户名" label-width="100px">   
+        {{currentname}}
+    </el-form-item>
+    <el-form-item label="角色" label-width="100px">
+      <el-select v-model="crrRole" placeholder="角色名称">
+        <el-option label="请选择" :value="-1"></el-option>
+        <el-option v-for="(item,index) in roles" :key="index" :label="item.roleName" :value="item.id"></el-option>
+      </el-select>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+    <el-button type="primary" @click="setRoleId()">确 定</el-button>
   </div>
 </el-dialog>
   </el-card>
@@ -140,20 +160,67 @@ export default {
           dialogFormVisibleAdd:false,
           // 编辑对话框
           dialogFormVisibleEdit:false,
+          // 角色对话框
+          dialogFormVisibleRole:false,
           form:{
             username:'',
             password:'',
             email:'',
             mobile: ''
-          }
+          },
+          currentname:'',
+          crrRole:-1,
+          roles:[],
+          // 当前用户的id
+          crrRoleID:-1
        }   
    },
    created(){
        this.getUserList()
    },
-   methods:{
+   methods:{  
+    //  点击确定按钮发送请求
+     async setRoleId(){
+         const res=await this.$http.put(`users/${this.crrRoleID}/role`,{
+            rid:this.crrRole        
+         })
+         this.dialogFormVisibleRole = false
+      },
+      // 角色分配
+     async setRole(user){
+         this.crrRoleID=user.id
+        this.currentname=user.username
+         //  获取角色的全部值
+         const res=await this.$http.get(`roles`)
+         this.roles=res.data.data
+           this.dialogFormVisibleRole=true
+          //  获取角色的id值
+          const res1=await this.$http.get(`users/${user.id}`)
+          this.crrRole=res1.data.data.rid
+      },
+
+    //  状态
+     async messtatus(user){
+      const res= await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
+    },
+    //  编辑--发送请求
+    async editPut(){
+      const res=await this.$http.put(`users/${this.form.id}`,this.form)
+      console.log(res)
+       const {
+         meta:{msg,status},data
+       }=res.data
+       if(status===200) {
+          this.getUserList()
+          this.dialogFormVisibleEdit=false
+          this.$message.success(msg)
+       }else {
+            this.$message.warning(msg)
+       }     
+    },
     //  编辑
-    editUser(){
+    editUser(UserID){
+       this.form = UserID
       this.dialogFormVisibleEdit=true
     },
     //  删除
