@@ -5,6 +5,10 @@ import Home from '@/components/home/home.vue'
 import Users from '@/components/users/users.vue'
 import Right from '@/components/rights/rights.vue'
 import Role from '@/components/role/role.vue'
+import {
+  Message
+} from 'element-ui'
+
 
 Vue.use(Router)
 
@@ -48,6 +52,7 @@ router.beforeEach((to,from,next)=>{
   }else {
      const token=localStorage.getItem('token')
      if(!token) {
+       Message.warning('请先登录')
        router.push({name:'login'})
        return
      }
