@@ -32,7 +32,7 @@ export default {
     async handleLogin () {
     //    在异步操作的前面加await,在用变量接收异步操作的结果,使之变得跟同步操作一样,代码风格更好看
       const res = await this.$http.post('login', this.formdata)
-
+      console.log(res)
       const
         {meta: {msg, status}, data} = res.data
       if (status === 200) {
